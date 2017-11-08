@@ -1,4 +1,4 @@
-package pt.nunoneto.tmdbexplorer.ui
+package pt.nunoneto.tmdbexplorer.ui.movielisting
 
 import android.support.v4.app.Fragment
 import android.os.Bundle
@@ -8,7 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import pt.nunoneto.tmdb_explorer.R
-import pt.nunoneto.tmdbexplorer.movies.Movie
+import pt.nunoneto.tmdbexplorer.config.entities.ImageConfig
+import pt.nunoneto.tmdbexplorer.movies.entities.Movie
 
 class MovieListFragment : Fragment(), MovieListPresenter.Callback {
 
@@ -39,6 +40,10 @@ class MovieListFragment : Fragment(), MovieListPresenter.Callback {
     override fun onMoviesLoaded(movies: List<Movie>) {
         mAdapter.movieList = movies
         mAdapter.notifyDataSetChanged()
+    }
+
+    override fun onConfigurationLoaded(config: ImageConfig) {
+        mAdapter.config = config
     }
 
     companion object {

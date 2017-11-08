@@ -1,34 +1,37 @@
 package pt.nunoneto.tmdbexplorer.movies
 
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
+import pt.nunoneto.tmdbexplorer.config.ConfigCache
+import pt.nunoneto.tmdbexplorer.config.entities.ImageConfig
+import pt.nunoneto.tmdbexplorer.movies.entities.Movie
+import pt.nunoneto.tmdbexplorer.movies.entities.MoviesPage
 import pt.nunoneto.tmdbexplorer.network.ServiceHelper
+import pt.nunoneto.tmdbexplorer.network.response.movielist.MovieListResponse
+import pt.nunoneto.tmdbexplorer.network.response.movielist.MovieListResponseItem
 
-class MovieManager : IMovieManager {
 
-    companion object {
+object MovieManager : IMovieManager  {
 
-        lateinit var managerInstance: MovieManager
+    override fun listTopRatedMovies(page: Int) : Observable<MoviesPage> {
+        var configObs = ConfigCache.imageConfig
+        var topRatedMoviesObs = getTopRatedMovies(page)
 
-        fun getInstance() : MovieManager {
-            if (managerInstance == null) {
-                managerInstance = MovieManager()
-            }
-
-            return managerInstance
-        }
-    }
-
-    override fun listTopRatedMoies(): Observable<List<Movie>> {
-        return ServiceHelper.getApi().getTopRatedMovies(0)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map({
-                    t -> Observable.fromArray(t.data.results)
-                        .flatMapIterable { t -> t }
-                        .map { t -> Movie.fromResponse(t) }
-                        .toList().blockingGet()
+        return Observable.zip(
+                configObs, topRatedMoviesObs,
+                BiFunction<ImageConfig, List<Movie>, MoviesPage> {
+                    imageConfig, movies -> MoviesPage(1, movies, imageConfig)
                 })
     }
+
+    fun getTopRatedMovies(page: Int): Observable<List<Movie>> {
+        return ServiceHelper.apiService
+                .getTopRatedMovies(page)
+                .subscribeOn(Schedulers.newThread())
+                .flatMapIterable { t: MovieListResponse -> t.results }
+                .map { t: MovieListResponseItem -> Movie.fromResponse(t) }
+                .toList().toObservable()
+    }
+
 }

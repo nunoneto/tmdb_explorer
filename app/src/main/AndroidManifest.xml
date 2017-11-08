@@ -13,7 +13,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
-                android:name="pt.nunoneto.tmdbexplorer.ui.MovieListActivity"
+                android:name="pt.nunoneto.tmdbexplorer.ui.movielisting.MovieListActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

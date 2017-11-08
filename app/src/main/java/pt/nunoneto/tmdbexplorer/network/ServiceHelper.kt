@@ -1,5 +1,6 @@
 package pt.nunoneto.tmdbexplorer.network
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -8,20 +9,10 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class ServiceHelper {
+object ServiceHelper {
 
-    companion object {
+    var apiService: ITMDBApiServices = Factory.createAPI()
 
-        lateinit var apiService: ITMDBApiServices
-
-        fun getApi() : ITMDBApiServices {
-            if (apiService == null) {
-                apiService = Factory.createAPI()
-            }
-
-            return apiService
-        }
-    }
 
     /**
      * Factory responsible for initializing the api services and respective dependencies
@@ -47,6 +38,7 @@ class ServiceHelper {
             private fun createHTTPClient() : OkHttpClient {
                 return OkHttpClient.Builder()
                         .addInterceptor(getApiKeyInterceptor())
+                        .addNetworkInterceptor(StethoInterceptor())
                         .build()
             }
 
@@ -57,7 +49,9 @@ class ServiceHelper {
                         val original = chain!!.request()
                         val originalHttpUrl = original.url()
 
-                        val url = originalHttpUrl.newBuilder()
+                        // Add API key
+                        var url = originalHttpUrl.newBuilder()
+
                                 .addQueryParameter("api_key", API_KEY)
                                 .build()
 
