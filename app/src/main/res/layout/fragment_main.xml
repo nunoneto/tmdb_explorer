@@ -6,12 +6,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:showIn="@layout/activity_main"
-        tools:context="pt.nunoneto.tmdb_explorer.pt.nunoneto.tmdbexplorer.ui.MovieListFragment">
+        tools:context="pt.nunoneto.tmdbexplorer.ui.MovieListFragment">
 
         <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_movies"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
-
+                android:layout_height="match_parent"/>
 
 </android.support.constraint.ConstraintLayout>

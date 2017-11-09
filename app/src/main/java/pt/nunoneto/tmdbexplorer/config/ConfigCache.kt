@@ -25,4 +25,10 @@ object ConfigCache {
 
             return Observable.just(mImageConfig!!)
         }
+
+    fun getPosterBasePath() : Observable<String> {
+        return imageConfig.map { t: ImageConfig ->
+            t.baseUrl + t.posterSizes!![2]
+        }
+    }
 }
