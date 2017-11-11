@@ -4,7 +4,7 @@ class IntentValues {
 
     companion object {
 
-        const val KEY_MOVIE:String = "key_movie"
+        const val KEY_MOVIE_ID:String = "key_movie"
     }
 
 }

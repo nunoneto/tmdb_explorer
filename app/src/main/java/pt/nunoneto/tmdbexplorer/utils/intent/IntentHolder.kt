@@ -11,7 +11,7 @@ class IntentHolder {
 
         fun openMovieDetailsScreen(context: Context, movie: Movie) : Intent{
             var intent = Intent(context, MovieDetailsActivity::class.java)
-            intent.putExtra(IntentValues.KEY_MOVIE, movie)
+            intent.putExtra(IntentValues.KEY_MOVIE_ID, movie.id)
             return intent
         }
 

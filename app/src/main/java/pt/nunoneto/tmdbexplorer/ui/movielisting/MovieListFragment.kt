@@ -5,10 +5,12 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
+import android.text.TextUtils
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -18,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_movie_list.*
 import pt.nunoneto.tmdb_explorer.R
 import pt.nunoneto.tmdbexplorer.movies.entities.Movie
 import pt.nunoneto.tmdbexplorer.ui.EndlessRecyclerViewScrollListener
+import pt.nunoneto.tmdbexplorer.utils.Utils
 
 
 class MovieListFragment : Fragment(), MovieListPresenter.MovieListView,
@@ -115,7 +118,7 @@ class MovieListFragment : Fragment(), MovieListPresenter.MovieListView,
         if (page > 1) {
             var curentLength = mAdapter.movieList.size -1
             mAdapter.movieList = mAdapter.movieList.plus(movies)
-            mAdapter.notifyItemRangeChanged(curentLength, mAdapter.movieList.size-1)
+            mAdapter.notifyItemRangeChanged(curentLength, mAdapter.movieList.size - 1)
 
         } else {
             mAdapter.movieList = movies
@@ -136,7 +139,8 @@ class MovieListFragment : Fragment(), MovieListPresenter.MovieListView,
             mErrorView.visibility = View.VISIBLE
             Glide.with(context)
                     .load(R.drawable.shrug_emoji)
-                    .into(mErrorView.findViewById<ImageView>(R.id.iv_error_image))
+                    .into(mErrorView.findViewById(R.id.iv_error_image))
+
             mErrorView.findViewById<TextView>(R.id.tv_error_text).text = getString(R.string.movie_list_load_error)
         }
     }
@@ -144,13 +148,31 @@ class MovieListFragment : Fragment(), MovieListPresenter.MovieListView,
     /** Methods from {@link SearchView.OnQueryTextListener} **/
 
     override fun onQueryTextSubmit(query: String?): Boolean {
+        if (TextUtils.isEmpty(query)) {
+            Snackbar.make(view!!,"", Snackbar.LENGTH_SHORT).show()
+            Utils.hideKeyboard(view)
+            return false
+        }
 
+        mPresenter.searchMovies(query!!)
+        Utils.hideKeyboard(view)
+        activity.toolbar.navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_arrow_back_black_36dp)
+        activity.toolbar.setNavigationOnClickListener {
+            activity.toolbar.navigationIcon = null
 
-        return false
+            var searchItem = activity.toolbar.menu.findItem(R.id.action_search)
+            searchItem.collapseActionView()
+
+            val searchView = searchItem.actionView as SearchView
+            searchView.setQuery("", false)
+            searchView.clearFocus()
+
+            mPresenter.clearSearch()
+        }
+        return true
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-
         return true
     }
 
