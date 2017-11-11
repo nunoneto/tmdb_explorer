@@ -17,7 +17,7 @@ import pt.nunoneto.tmdbexplorer.movies.entities.Movie
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MoviesListAdapter : RecyclerView.Adapter<MoviesListAdapter.ViewHolder>() {
+class MoviesListAdapter(var mClickListener: IMovieClickListener) : RecyclerView.Adapter<MoviesListAdapter.ViewHolder>() {
 
     var movieList: List<Movie> = ArrayList()
     lateinit var imageBasePath: String
@@ -36,7 +36,18 @@ class MoviesListAdapter : RecyclerView.Adapter<MoviesListAdapter.ViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent!!.context).inflate(R.layout.movie_list_item, parent, false))
+        var viewHolder = ViewHolder(LayoutInflater.from(parent!!.context).inflate(R.layout.movie_list_item, parent, false))
+
+        viewHolder.item.setOnClickListener(View.OnClickListener {
+            val adapterPosition = viewHolder.adapterPosition
+            if (adapterPosition == RecyclerView.NO_POSITION || adapterPosition >= movieList.size) {
+                return@OnClickListener
+            }
+
+            mClickListener.onMovieClicked(movieList[adapterPosition])
+        })
+
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
@@ -81,8 +92,13 @@ class MoviesListAdapter : RecyclerView.Adapter<MoviesListAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var context: Context = itemView.context
 
+        var item: View = itemView.rl_movie_list_item_wrapper
         val poster: ImageView = itemView.iv_movie_poster
         val title: TextView= itemView.tv_movie_title
         val releaseYear: TextView = itemView.tv_release_year
+    }
+
+    interface IMovieClickListener {
+        fun onMovieClicked(movie: Movie)
     }
 }

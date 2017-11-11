@@ -13,7 +13,21 @@ class ConnectivityUtils {
     companion object {
 
         private var sConnectivityListeners = ArrayList<IConnectivityEvent>()
-        private lateinit var sConnectivityReceiver: BroadcastReceiver
+        private var sConnectivityReceiver: BroadcastReceiver
+
+        init {
+            sConnectivityReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+                    val connected = !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)
+                    notifyListeners(connected)
+                }
+            }
+
+            val filter = IntentFilter()
+            filter.addAction(android.net.ConnectivityManager.CONNECTIVITY_ACTION)
+            TMDBApplication.getContext().registerReceiver(sConnectivityReceiver, filter)
+        }
+
 
         fun isConnected() : Boolean {
             val connMgr = TMDBApplication.getContext()
@@ -28,23 +42,15 @@ class ConnectivityUtils {
             }
 
             sConnectivityListeners.add(listener)
-
-            if (sConnectivityReceiver == null) {
-                sConnectivityReceiver = object : BroadcastReceiver() {
-                    override fun onReceive(context: Context, intent: Intent) {
-                        val connected = !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)
-
-                    }
-                }
-
-                val filter = IntentFilter()
-                filter.addAction(android.net.ConnectivityManager.CONNECTIVITY_ACTION)
-                TMDBApplication.getContext().registerReceiver(sConnectivityReceiver, filter)
-            }
         }
 
         fun unsubscribeConnectivityEvents(listener: IConnectivityEvent) {
             sConnectivityListeners.remove(listener)
+        }
+
+        private fun notifyListeners(connected: Boolean) {
+            for (listener in sConnectivityListeners)
+                listener.onConnectivityChanged(connected)
         }
 
     }
