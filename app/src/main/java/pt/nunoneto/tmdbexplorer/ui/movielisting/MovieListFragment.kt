@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.text.TextUtils
 import android.view.*
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -156,7 +155,7 @@ class MovieListFragment : Fragment(), MovieListPresenter.MovieListView,
 
         mPresenter.searchMovies(query!!)
         Utils.hideKeyboard(view)
-        activity.toolbar.navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_arrow_back_black_36dp)
+        activity.toolbar.navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_arrow_back_white_24dp)
         activity.toolbar.setNavigationOnClickListener {
             activity.toolbar.navigationIcon = null
 

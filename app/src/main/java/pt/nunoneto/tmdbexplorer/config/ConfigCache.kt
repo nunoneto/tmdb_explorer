@@ -19,6 +19,7 @@ object ConfigCache {
                 mImageConfig = obs.map { (images) ->
                     ImageConfig(
                             images!!.posterSizes,
+                            images!!.backdropSizes,
                             images.baseUrl)
                 }.blockingSingle()
             }
@@ -29,6 +30,12 @@ object ConfigCache {
     fun getPosterBasePath() : Observable<String> {
         return imageConfig.map { t: ImageConfig ->
             t.baseUrl + t.posterSizes!![2]
+        }
+    }
+
+    fun getBackDropBasePath() : Observable<String> {
+        return imageConfig.map { t: ImageConfig ->
+            t.baseUrl + t.backdropSizes!!.last()
         }
     }
 }

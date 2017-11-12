@@ -1,7 +1,9 @@
 package pt.nunoneto.tmdbexplorer.movies
 
 import io.reactivex.Observable
+import io.reactivex.Observable.zip
 import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
 import pt.nunoneto.tmdbexplorer.config.ConfigCache
 import pt.nunoneto.tmdbexplorer.movies.entities.Movie
@@ -18,7 +20,7 @@ object MovieManager : IMovieManager  {
         val imagePathObs = ConfigCache.getPosterBasePath()
         val topRatedMoviesObs = getTopRatedMovies(page)
 
-        return Observable.zip(
+        return zip(
                 imagePathObs, topRatedMoviesObs,
                 BiFunction<String, MoviesPage, MoviesPage> {
                     imageBasePath, movies -> MoviesPage(movies.page, movies.movies, imageBasePath)
@@ -29,7 +31,7 @@ object MovieManager : IMovieManager  {
         val imagePathObs = ConfigCache.getPosterBasePath()
         val movieSearchObs = getMovieSearch(query, page)
 
-        return Observable.zip(
+        return zip(
                 imagePathObs, movieSearchObs,
                 BiFunction<String, MoviesPage, MoviesPage> {
                     imageBasePath, movies -> MoviesPage(movies.page, movies.movies, imageBasePath)
@@ -37,19 +39,20 @@ object MovieManager : IMovieManager  {
     }
 
     override fun getMovieDetails(movieId: String): Observable<MovieDetails> {
-        val imagePathObs = ConfigCache.getPosterBasePath()
+        val posterPathObs = ConfigCache.getPosterBasePath()
+        val backdropPathObs = ConfigCache.getBackDropBasePath()
         val movieDetailsObs = ServiceHelper.apiService.getMovieDetails(movieId)
                 .subscribeOn(Schedulers.newThread())
                 .map { t: MovieDetailsResponse -> MovieDetails.fromResponse(t) }
 
         return Observable.zip(
-                imagePathObs, movieDetailsObs,
-                BiFunction<String, MovieDetails, MovieDetails> {
-                    imageBasePath, movieDetails ->
-                        movieDetails.imageBasePath = imageBasePath
-                        movieDetails
-                })
-
+                posterPathObs,
+                backdropPathObs,
+                movieDetailsObs,
+                Function3<String, String, MovieDetails, MovieDetails> { posterPath, backdropPath, movieDetails ->
+                    movieDetails.backdropBasePath = backdropPath
+                    movieDetails.posterBasePath = posterPath
+                    movieDetails })
     }
 
     /** Private methods **/

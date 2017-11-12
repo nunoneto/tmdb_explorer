@@ -9,4 +9,16 @@
     <string name="movie_list_load_error">Sorry, there was a problem... \nTry again later</string>
     <string name="title_activity_movie_details">MovieDetailsActivity</string>
 
+    <!-- Movie Details -->
+
+    <string name="details_overview">"Overview"</string>
+    <string name="details_popularity">"Popularity"</string>
+    <string name="details_voting">"Voting"</string>
+    <string name="details_voting_value">Average of %1s with a total count of %2s votes</string>
+    <string name="details_budget">"Budget/Revenue"</string>
+    <string name="details_budget_details">%1s$ of budget with a total ticket sales of %2s$</string>
+    <string name="details_runtime">"Runtime"</string>
+    <string name="details_runtime_value">%1s minutes</string>
+    <string name="details_date">"Release Date"</string>
+
 </resources>

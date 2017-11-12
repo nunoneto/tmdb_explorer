@@ -10,7 +10,7 @@ data class MovieListResponseItem(val overview: String = "",
                                  val video: Boolean = false,
                                  val title: String = "",
                                  @SerializedName("genre_ids")
-                       val genreIds: List<Integer>? = null,
+                       val genreIds: List<Int>? = null,
                                  @SerializedName("poster_path")
                        val posterPath: String = "",
                                  @SerializedName("backdrop_path")
