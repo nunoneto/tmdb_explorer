@@ -17,17 +17,16 @@ import pt.nunoneto.tmdbexplorer.movies.entities.Movie
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MoviesListAdapter(var mClickListener: IMovieClickListener) : RecyclerView.Adapter<MoviesListAdapter.ViewHolder>() {
+class MoviesListAdapter(private var mClickListener: IMovieClickListener) : RecyclerView.Adapter<MoviesListAdapter.ViewHolder>() {
 
     var movieList: List<Movie> = ArrayList()
     lateinit var imageBasePath: String
 
     // Private
-    private var sdf: SimpleDateFormat
+    private var sdf: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
     private var mCurrentYear: Int = -1
 
     init {
-        sdf = SimpleDateFormat("yyyy-MM-dd")
         mCurrentYear = Calendar.getInstance().get(Calendar.YEAR)
     }
 
