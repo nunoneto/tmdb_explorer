@@ -13,7 +13,6 @@ object ServiceHelper {
 
     var apiService: ITMDBApiServices = Factory.createAPI()
 
-
     /**
      * Factory responsible for initializing the api services and respective dependencies
      */
@@ -43,24 +42,21 @@ object ServiceHelper {
             }
 
             private fun getApiKeyInterceptor() : Interceptor {
-                return object: Interceptor {
+                return Interceptor { chain ->
+                    val original = chain!!.request()
+                    val originalHttpUrl = original.url()
 
-                    override fun intercept(chain: Interceptor.Chain?): Response {
-                        val original = chain!!.request()
-                        val originalHttpUrl = original.url()
+                    // Add API key
+                    var url = originalHttpUrl.newBuilder()
 
-                        // Add API key
-                        var url = originalHttpUrl.newBuilder()
+                            .addQueryParameter("api_key", API_KEY)
+                            .build()
 
-                                .addQueryParameter("api_key", API_KEY)
-                                .build()
+                    val requestBuilder = original.newBuilder()
+                            .url(url)
 
-                        val requestBuilder = original.newBuilder()
-                                .url(url)
-
-                        val request = requestBuilder.build()
-                        return chain.proceed(request)
-                    }
+                    val request = requestBuilder.build()
+                    chain.proceed(request)
                 }
             }
         }
