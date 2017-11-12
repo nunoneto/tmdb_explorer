@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -30,6 +31,11 @@ class MovieDetailsFragment : Fragment(), MovieDetailsPresenter.MovieDetailsView 
 
         setUiComponents()
         mPresenter = MovieDetailsPresenter(activity.intent, savedInstanceState, this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        mPresenter.saveState(outState)
     }
 
     private fun setUiComponents() {
@@ -59,6 +65,7 @@ class MovieDetailsFragment : Fragment(), MovieDetailsPresenter.MovieDetailsView 
                 .into(iv_movie_poster)
 
         var details = ArrayList<Pair<String, String>>()
+
         details.add(Pair(getString(R.string.details_overview),movie.overview))
         details.add(Pair(getString(R.string.details_popularity), movie.popularity.toString()))
         details.add(Pair(getString(R.string.details_voting),
@@ -72,6 +79,11 @@ class MovieDetailsFragment : Fragment(), MovieDetailsPresenter.MovieDetailsView 
 
         mAdapter.mDetails = details
         mAdapter.notifyDataSetChanged()
+    }
+
+    override fun onError() {
+        Toast.makeText(context, R.string.movie_details_load_error, Toast.LENGTH_LONG).show()
+        activity.finish()
     }
 
     companion object {

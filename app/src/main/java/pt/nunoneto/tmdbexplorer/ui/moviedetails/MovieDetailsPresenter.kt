@@ -11,32 +11,37 @@ import pt.nunoneto.tmdbexplorer.utils.intent.IntentValues
 
 class MovieDetailsPresenter(intent: Intent?, savedInstanceFragment: Bundle?, private var mView: MovieDetailsView) {
 
-    private lateinit var mMovie: MovieDetails
+    private var mMovie: MovieDetails? = null
 
     companion object {
         const val BUNDLE_KEY_MOVIE: String = "bundle_key_movie"
     }
 
     init {
-        if (intent != null) {
+        if (savedInstanceFragment != null) {
+            mMovie = savedInstanceFragment.getParcelable(BUNDLE_KEY_MOVIE)
+        }
+
+        if (mMovie != null) {
+            mView.onMovieLoaded(mMovie!!)
+
+        } else if (intent != null) {
             var movieId = intent.getIntExtra(IntentValues.KEY_MOVIE_ID, -1)
             loadMovieDetails(movieId.toString())
         }
+    }
 
-        restoreState(savedInstanceFragment)
+    fun saveState(savedInstance: Bundle?) {
+        if (savedInstance == null) {
+            return
+        }
+
+        savedInstance.putParcelable(BUNDLE_KEY_MOVIE, mMovie)
     }
 
     // Private Methods
 
-    private fun restoreState(savedInstanceState: Bundle?) {
-        if (savedInstanceState == null) {
-            return
-        }
-
-        mMovie = savedInstanceState.getParcelable(BUNDLE_KEY_MOVIE)
-    }
-
-    fun loadMovieDetails(movieId: String) {
+    private fun loadMovieDetails(movieId: String) {
         MovieManager.getMovieDetails(movieId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object: Observer<MovieDetails> {
@@ -49,7 +54,7 @@ class MovieDetailsPresenter(intent: Intent?, savedInstanceFragment: Bundle?, pri
                     }
 
                     override fun onError(e: Throwable) {
-
+                        mView.onError()
                     }
 
                     override fun onNext(t: MovieDetails) {
@@ -61,5 +66,6 @@ class MovieDetailsPresenter(intent: Intent?, savedInstanceFragment: Bundle?, pri
 
     interface MovieDetailsView {
         fun onMovieLoaded(movie: MovieDetails)
+        fun onError()
     }
 }

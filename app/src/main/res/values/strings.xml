@@ -20,5 +20,6 @@
     <string name="details_runtime">"Runtime"</string>
     <string name="details_runtime_value">%1s minutes</string>
     <string name="details_date">"Release Date"</string>
+    <string name="movie_details_load_error">Sorry, there was a problem. Try again later</string>
 
 </resources>
