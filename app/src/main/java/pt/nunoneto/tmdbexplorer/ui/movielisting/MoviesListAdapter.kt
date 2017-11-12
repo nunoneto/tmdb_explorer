@@ -55,6 +55,7 @@ class MoviesListAdapter(private var mClickListener: IMovieClickListener) : Recyc
         // Poster
         Glide.with(holder!!.context)
                 .load(imageBasePath + movie.poster_path)
+                .apply(RequestOptions().placeholder(R.drawable.poster_item_placeholder))
                 .apply(RequestOptions.circleCropTransform())
                 .into(holder.poster)
 

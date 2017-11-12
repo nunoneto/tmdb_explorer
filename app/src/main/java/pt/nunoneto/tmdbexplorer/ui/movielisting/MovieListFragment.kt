@@ -115,9 +115,9 @@ class MovieListFragment : Fragment(), MovieListPresenter.MovieListView,
         mErrorView.visibility = View.GONE
 
         if (page > 1) {
-            var curentLength = mAdapter.movieList.size -1
+            var currentLength = mAdapter.movieList.size -1
             mAdapter.movieList = mAdapter.movieList.plus(movies)
-            mAdapter.notifyItemRangeChanged(curentLength, mAdapter.movieList.size - 1)
+            mAdapter.notifyItemRangeChanged(currentLength, mAdapter.movieList.size - 1)
 
         } else {
             mAdapter.movieList = movies
@@ -148,7 +148,7 @@ class MovieListFragment : Fragment(), MovieListPresenter.MovieListView,
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (TextUtils.isEmpty(query)) {
-            Snackbar.make(view!!,"", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(view!!,R.string.moie_list_invalid_search, Snackbar.LENGTH_SHORT).show()
             Utils.hideKeyboard(view)
             return false
         }
@@ -161,6 +161,7 @@ class MovieListFragment : Fragment(), MovieListPresenter.MovieListView,
 
             var searchItem = activity.toolbar.menu.findItem(R.id.action_search)
             searchItem.collapseActionView()
+            activity.toolbar.collapseActionView()
 
             val searchView = searchItem.actionView as SearchView
             searchView.setQuery("", false)

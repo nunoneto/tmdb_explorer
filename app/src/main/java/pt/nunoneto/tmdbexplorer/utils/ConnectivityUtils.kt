@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import pt.nunoneto.tmdbexplorer.TMDBApplication
 
-
 class ConnectivityUtils {
 
     companion object {
@@ -52,7 +51,6 @@ class ConnectivityUtils {
             for (listener in sConnectivityListeners)
                 listener.onConnectivityChanged(connected)
         }
-
     }
 
     interface IConnectivityEvent {

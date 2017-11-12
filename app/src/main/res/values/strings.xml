@@ -8,6 +8,7 @@
     <string name="movie_list_page_load_error">Sorry, could not load the next page :(</string>
     <string name="movie_list_load_error">Sorry, there was a problem... \nTry again later</string>
     <string name="title_activity_movie_details">MovieDetailsActivity</string>
+    <string name="moie_list_invalid_search">Please enter a valid search</string>
 
     <!-- Movie Details -->
     <string name="details_overview">"Overview"</string>

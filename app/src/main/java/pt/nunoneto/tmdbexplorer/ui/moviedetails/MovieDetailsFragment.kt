@@ -70,6 +70,7 @@ class MovieDetailsFragment : Fragment(), MovieDetailsPresenter.MovieDetailsView 
                 .load(imagePath)
                 .apply(RequestOptions().dontTransform())
                 .apply(RequestOptions().downsample(DownsampleStrategy.NONE))
+                .apply(RequestOptions().placeholder(R.drawable.placeholder))
                 .into(iv_movie_poster)
 
         var details = ArrayList<Pair<String, String>>()
