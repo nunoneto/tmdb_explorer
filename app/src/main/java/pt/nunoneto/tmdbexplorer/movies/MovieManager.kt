@@ -16,6 +16,7 @@ import pt.nunoneto.tmdbexplorer.network.response.movielist.MovieListResponseItem
 
 
 object MovieManager : IMovieManager  {
+
     override fun listTopRatedMovies(page: Int) : Observable<MoviesPage> {
         val imagePathObs = ConfigCache.getPosterBasePath()
         val topRatedMoviesObs = getTopRatedMovies(page)
@@ -41,9 +42,7 @@ object MovieManager : IMovieManager  {
     override fun getMovieDetails(movieId: String): Observable<MovieDetails> {
         val posterPathObs = ConfigCache.getPosterBasePath()
         val backdropPathObs = ConfigCache.getBackDropBasePath()
-        val movieDetailsObs = ServiceHelper.apiService.getMovieDetails(movieId)
-                .subscribeOn(Schedulers.newThread())
-                .map { t: MovieDetailsResponse -> MovieDetails.fromResponse(t) }
+        val movieDetailsObs = getMovieDetailsResult(movieId)
 
         return Observable.zip(
                 posterPathObs,
@@ -62,11 +61,11 @@ object MovieManager : IMovieManager  {
                 .getTopRatedMovies(page)
                 .subscribeOn(Schedulers.newThread())
 
-        return obs.flatMapIterable { t: MovieListResponse -> t.results }
-                .map { t: MovieListResponseItem -> Movie.fromResponse(t) }
+        return obs.flatMapIterable { response: MovieListResponse -> response.results }
+                .map { item: MovieListResponseItem -> Movie.fromResponse(item) }
                 .toList()
-                .map { t: MutableList<Movie> ->
-                    MoviesPage(obs.map { t -> t.page }.blockingFirst(), t,"") }
+                .map { movie: MutableList<Movie> ->
+                    MoviesPage(obs.map { response: MovieListResponse ->  response.page }.blockingFirst(), movie,"") }
                 .toObservable()
     }
 
@@ -75,12 +74,17 @@ object MovieManager : IMovieManager  {
                 .searchMovies(query, page)
                 .subscribeOn(Schedulers.newThread())
 
-        return obs.flatMapIterable { t: MovieListResponse -> t.results }
-                .map { t: MovieListResponseItem -> Movie.fromResponse(t) }
+        return obs.flatMapIterable { response: MovieListResponse -> response.results }
+                .map { item: MovieListResponseItem -> Movie.fromResponse(item) }
                 .toList()
-                .map { t: MutableList<Movie> ->
-                    MoviesPage(obs.map { t -> t.page }.blockingFirst(), t,"") }
+                .map { movieList: MutableList<Movie> ->
+                    MoviesPage(obs.map { response: MovieListResponse -> response.page }.blockingFirst(), movieList,"") }
                 .toObservable()
     }
 
+    private fun getMovieDetailsResult(movieId: String): Observable<MovieDetails> {
+        return ServiceHelper.apiService.getMovieDetails(movieId)
+                .subscribeOn(Schedulers.newThread())
+                .map { response: MovieDetailsResponse -> MovieDetails.fromResponse(response) }
+    }
 }

@@ -18,24 +18,32 @@ object ConfigCache {
 
                 mImageConfig = obs.map { (images) ->
                     ImageConfig(
-                            images!!.posterSizes,
-                            images!!.backdropSizes,
-                            images.baseUrl)
+                            images?.posterSizes,
+                            images?.backdropSizes,
+                            images?.baseUrl)
                 }.blockingSingle()
             }
 
-            return Observable.just(mImageConfig!!)
+            return Observable.just(mImageConfig)
         }
 
     fun getPosterBasePath() : Observable<String> {
         return imageConfig.map { t: ImageConfig ->
-            t.baseUrl + t.posterSizes!![2]
+            if (t.baseUrl != null && t.posterSizes != null && t.posterSizes.size >= 3) {
+                t.baseUrl.plus(t.posterSizes[2])
+            } else {
+                ""
+            }
         }
     }
 
     fun getBackDropBasePath() : Observable<String> {
         return imageConfig.map { t: ImageConfig ->
-            t.baseUrl + t.backdropSizes!!.last()
+            if (t.baseUrl != null && t.backdropSizes != null) {
+                t.baseUrl + t.backdropSizes.last()
+            } else {
+                ""
+            }
         }
     }
 }

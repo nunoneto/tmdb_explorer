@@ -19,6 +19,7 @@ data class MovieDetails (val imdbId: String = "",
                          val posterPath: String? = null,
                          val releaseDate: String = "",
                          val voteAverage: Double = 0.0,
+                         val tagline: String = "",
                          var posterBasePath: String = "",
                          var backdropBasePath: String = "") : Parcelable {
 
@@ -39,6 +40,7 @@ data class MovieDetails (val imdbId: String = "",
             parcel.readString(),
             parcel.readDouble(),
             parcel.readString(),
+            parcel.readString(),
             parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -57,6 +59,7 @@ data class MovieDetails (val imdbId: String = "",
         parcel.writeString(posterPath)
         parcel.writeString(releaseDate)
         parcel.writeDouble(voteAverage)
+        parcel.writeString(tagline)
         parcel.writeString(posterBasePath)
         parcel.writeString(backdropBasePath)
     }
@@ -78,7 +81,8 @@ data class MovieDetails (val imdbId: String = "",
             return MovieDetails(response.imdbId, response.video, response.title, response.backdropPath,
                     response.revenue, response.popularity, response.id, response.voteCount,
                     response.budget, response.overview, response.originalTitle, response.runtime,
-                    response.posterPath, response.releaseDate, response.voteAverage, "", "")
+                    response.posterPath, response.releaseDate, response.voteAverage,
+                    response.tagline, "", "")
         }
     }
 

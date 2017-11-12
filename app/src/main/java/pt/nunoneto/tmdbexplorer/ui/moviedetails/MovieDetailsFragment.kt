@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,8 +59,15 @@ class MovieDetailsFragment : Fragment(), MovieDetailsPresenter.MovieDetailsView 
 
     override fun onMovieLoaded(movie: MovieDetails) {
         toolbar.title = movie.title
+        toolbar.subtitle = movie.tagline
+
+        var imagePath = movie.backdropBasePath + movie.backdropPath
+        if (TextUtils.isEmpty(movie.backdropPath)) {
+            imagePath = movie.posterBasePath + movie.posterPath
+        }
+
         Glide.with(context)
-                .load(movie.backdropBasePath + movie.backdropPath)
+                .load(imagePath)
                 .apply(RequestOptions().dontTransform())
                 .apply(RequestOptions().downsample(DownsampleStrategy.NONE))
                 .into(iv_movie_poster)
@@ -67,13 +75,23 @@ class MovieDetailsFragment : Fragment(), MovieDetailsPresenter.MovieDetailsView 
         var details = ArrayList<Pair<String, String>>()
 
         details.add(Pair(getString(R.string.details_overview),movie.overview))
-        details.add(Pair(getString(R.string.details_popularity), movie.popularity.toString()))
-        details.add(Pair(getString(R.string.details_voting),
-                getString(R.string.details_voting_value, movie.voteAverage.toString(), movie.voteCount.toString())))
 
-        details.add(Pair(getString(R.string.details_runtime), getString(R.string.details_runtime_value, movie.runtime.toString())))
-        details.add(Pair(getString(R.string.details_budget),
-                getString(R.string.details_budget_details, movie.budget.toString(), movie.revenue.toString())))
+        val popularity = Math.round(movie.popularity)
+        details.add(Pair(getString(R.string.details_popularity),
+                getString(R.string.details_popularity_value, popularity.toString())))
+
+        if (movie.voteAverage > 0 && movie.voteCount > 0) {
+            details.add(Pair(getString(R.string.details_voting),
+                    getString(R.string.details_voting_value, movie.voteAverage.toString(), movie.voteCount.toString())))
+        }
+
+        details.add(Pair(getString(R.string.details_runtime),
+                getString(R.string.details_runtime_value, movie.runtime.toString())))
+
+        if (movie.budget > 0 && movie.revenue > 0) {
+            details.add(Pair(getString(R.string.details_budget),
+                    getString(R.string.details_budget_details, movie.budget.toString(), movie.revenue.toString())))
+        }
 
         details.add(Pair(getString(R.string.details_date), movie.releaseDate))
 
@@ -82,7 +100,7 @@ class MovieDetailsFragment : Fragment(), MovieDetailsPresenter.MovieDetailsView 
     }
 
     override fun onError() {
-        Toast.makeText(context, R.string.movie_details_load_error, Toast.LENGTH_LONG).show()
+        Toast.makeText(context, R.string.movie_details_load_error, Toast.LENGTH_SHORT).show()
         activity.finish()
     }
 
